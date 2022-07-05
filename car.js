@@ -10,6 +10,7 @@ class Car {
     this.accelaration = 0.2
     this.maxSpeed = 3
     this.friction = 0.05
+    this.damaged = false // assume the car aren't damaged
     this.angle = 0 // the heading of the car, to which direction it's pointed to
   }
 
@@ -40,6 +41,7 @@ class Car {
   }
 
   draw(ctx) { // method that draws the car into a given context
+    ctx.fillStyle = this.damaged? "gray" : "black"
     ctx.beginPath()
     ctx.moveTo(this.polygon[0].x,this.polygon[0].y)
     for (let i= 1; i<this.polygon.length; i++){
@@ -54,9 +56,17 @@ class Car {
 
   update(roadBorders){
     this.#move()
-    this.sensors.update(roadBorders)
     this.polygon = this.#createPolygon()
+    this.damaged = this.#assessDamage(roadBorders)
+    this.sensors.update(roadBorders)
   }
+
+  #assessDamage(borders) {
+    return  borders.some( (border) => polysIntersect(this.polygon, border))
+  }
+
+
+  
   #move() {
     if (this.controls.forward){
       this.speed += this.accelaration
