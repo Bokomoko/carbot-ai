@@ -5,6 +5,7 @@ class Car {
     this.width = width
     this.height = height
     this.controls = new Controls()
+    this.sensors = new Sensor(this, 9, 150,Math.PI/2)
     this.speed = 0 
     this.accelaration = 0.2
     this.maxSpeed = 3
@@ -25,11 +26,13 @@ class Car {
     )
     ctx.fill()
     ctx.restore() // this ensures the translations and rotations apply only to the car
+    this.sensors.draw(ctx)
     
   }
 
-  update(){
+  update(roadBorders){
     this.#move()
+    this.sensors.update(roadBorders)
   }
   #move() {
     if (this.controls.forward){

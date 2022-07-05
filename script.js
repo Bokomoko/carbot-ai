@@ -18,7 +18,7 @@ car.draw(ctx) // invokes the method to draw the car into a context
 animate()
 
 function animate() {
-  car.update()
+  car.update(road.borders)
 
   // this will resize and clear the canvas
   canvas.height = window.innerHeight // sets the Height (vertical size) to the max fit 
