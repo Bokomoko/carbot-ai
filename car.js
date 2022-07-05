@@ -13,19 +13,41 @@ class Car {
     this.angle = 0 // the heading of the car, to which direction it's pointed to
   }
 
+  // this is a very specific algorithm to get the points of the 
+  // vertices of the rectangular shaped car.
+  // the array returned is the list of vertices of the car
+  #createPolygon(){
+    const points = []
+    const rad = Math.hypot(this.width, this.height)/2
+    const alpha = Math.atan2(this.width, this.height)
+    points.push({
+      x : this.x - Math.sin(this.angle+alpha)*rad,
+      y : this.y - Math.cos(this.angle+alpha)*rad
+    })
+    points.push({
+      x : this.x - Math.sin(this.angle-alpha)*rad,
+      y : this.y - Math.cos(this.angle-alpha)*rad
+    })
+    points.push({
+      x : this.x - Math.sin(Math.PI+this.angle+alpha)*rad,
+      y : this.y - Math.cos(Math.PI+this.angle+alpha)*rad
+    })
+    points.push({
+      x : this.x - Math.sin(Math.PI+this.angle-alpha)*rad,
+      y : this.y - Math.cos(Math.PI+this.angle-alpha)*rad
+    })
+    return points
+  }
+
   draw(ctx) { // method that draws the car into a given context
-    ctx.save()
-    ctx.translate(this.x, this.y)
-    ctx.rotate(-this.angle)
     ctx.beginPath()
-    ctx.rect(
-       - this.width/2,
-       - this.height/2,
-      this.width,
-      this.height
-    )
+    ctx.moveTo(this.polygon[0].x,this.polygon[0].y)
+    for (let i= 1; i<this.polygon.length; i++){
+      const { x , y } = this.polygon[i]
+      ctx.lineTo( x, y)
+    }
     ctx.fill()
-    ctx.restore() // this ensures the translations and rotations apply only to the car
+
     this.sensors.draw(ctx)
     
   }
@@ -33,6 +55,7 @@ class Car {
   update(roadBorders){
     this.#move()
     this.sensors.update(roadBorders)
+    this.polygon = this.#createPolygon()
   }
   #move() {
     if (this.controls.forward){

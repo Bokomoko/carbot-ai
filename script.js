@@ -13,8 +13,6 @@ const middle = road.getLaneCenter(Math.floor(road.laneCount/2))
 // create a car and put it in this middle lane
 const car = new Car(middle,100,30,50)   // creates a car at the middle lane of the road
 
-car.draw(ctx) // invokes the method to draw the car into a context
-
 animate()
 
 function animate() {
