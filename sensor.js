@@ -9,20 +9,36 @@ class Sensor{
   }
   update(roadBorders){
     this.#castRays()
-    this.readings = this.rays.map( (ray)=> this.#getReadings( ray , roadBorders) )
-    console.log({readings:this.readings})
+    this.readings=[ ]  // no readings 
+    for (let i=0; i<this.rays.length;i++){
+      this.readings.push(
+        this.#getReadings(this.rays[i],roadBorders)
+      )
+    }
   }
 
-  #getReadings( ray, someBorders) {
-
-    const interceptions = someBorders
-      .map( border => getIntersection( ray , border) )
-      .filter((interception)=> !!interception)
-      .map( (point ) => Math.sqrt( (point[0]-ray[0][0])**2 + (point[1]-ray[0][1])**2 ) )
-      .sort()
-    return interceptions
+  #getReadings(ray, borders){
+    let touches=[]
+    for (let i=0; i<borders.length; i++) {
+      const touch = getIntersection(
+        ray[0],
+        ray[1],
+        borders[i][0],
+        borders[i][1]
+      )
+      if (touch){
+        touches.push(touch)
+      }
+    }
+      
+    if (touches.length ==0 ) { // the ray didn't touch anything
+      return null
+    }
+    // return the touch with the least offset 
+    // sorts the touches by offset
+    // returns touches[0]
+    return touches.sort((first, second) => first.offset - second.offset )[0]
   }
-
 
   
   #castRays(){
@@ -43,13 +59,25 @@ class Sensor{
            
     }
   draw(ctx){
-      this.rays.forEach((ray)=>{
-        const [start, end] = ray 
+      this.rays.forEach((ray, whichRay)=>{
+        let [start, end] = ray 
+        if (this.readings[whichRay]) { // if there is a reading for this ray ...
+          end = this.readings[whichRay] // the ray stops at the first obstacle
+        }
+        // draws the ray yellow until it reaches a block
         ctx.beginPath()
         ctx.lineWidth=2
         ctx.strokeStyle="yellow"
         ctx.moveTo( start.x, start.y)
         ctx.lineTo( end.x,end.y)
+        ctx.stroke()
+
+        // from then on, we'll paint it black so we can see the reach of the sensor
+        ctx.beginPath()
+        ctx.lineWidth=2
+        ctx.strokeStyle="red"
+        ctx.moveTo( ray[1].x, ray[1].y) // where it should've ended if not blocked
+        ctx.lineTo( end.x,end.y)        // where it ended because of block
         ctx.stroke()
         
       })

@@ -2,20 +2,23 @@ function lerp(A,B,percent){
   return A+(B-A) * percent
 }
 
-function getIntersection(line1, line2) {
-  var x1 = line1[0][0],
-    y1 = line1[0][1],
-    x2 = line1[1][0],
-    y2 = line1[1][1];
-  var x3 = line2[0][0],
-    y3 = line2[0][1],
-    x4 = line2[1][0],
-    y4 = line2[1][1];
-  var d = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
-  if (d == 0) return null;
-  var xi =
-    ((x3 - x4) * (x1 * y2 - y1 * x2) - (x1 - x2) * (x3 * y4 - y3 * x4)) / d;
-  var yi =
-    ((y3 - y4) * (x1 * y2 - y1 * x2) - (y1 - y2) * (x3 * y4 - y3 * x4)) / d;
-  return [xi, yi];
+
+function getIntersection(A,B,C,D) {
+  // segment from A-B intersects with C-D
+  const tTop = (D.x - C.x)*(A.y-C.y)-
+               (D.y - C.y)*(A.x-C.x)
+  const uTop = (C.y - A.y)*(A.x-B.x)-
+               (C.x - A.x)*(A.y-B.y)
+  const bottom = (D.y-C.y)*(B.x-A.x)-
+                 (D.x-C.x)*(B.y-A.y)
+  if (bottom!=0){
+    const t = tTop/bottom
+    const u = uTop/bottom
+    if (t >=0 && t<=1 && u>=0 && u<=1){
+      return ({ x:lerp(A.x,B.x,t),
+                y:lerp(A.y,B.y,t),
+                offset:t
+            })
+    }
+  }
 }
