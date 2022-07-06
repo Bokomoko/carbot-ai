@@ -1,14 +1,16 @@
 class Car {
-  constructor( x, y, width, height){
+  constructor( x, y, width, height, controlType, maxSpeed=3 ){
     this.x = x
     this.y = y
     this.width = width
     this.height = height
-    this.controls = new Controls()
-    this.sensors = new Sensor(this, 9, 150,Math.PI/2)
+    this.controls = new Controls(controlType)
+    if (controlType != "DUMMY") {
+      this.sensors = new Sensor(this, 9, 150,Math.PI/2)
+    }
     this.speed = 0 
     this.accelaration = 0.2
-    this.maxSpeed = 3
+    this.maxSpeed = maxSpeed
     this.friction = 0.05
     this.damaged = false // assume the car aren't damaged
     this.angle = 0 // the heading of the car, to which direction it's pointed to
@@ -50,15 +52,21 @@ class Car {
     }
     ctx.fill()
 
-    this.sensors.draw(ctx)
+    if (this.sensors){
+      this.sensors.draw(ctx)
+    }
     
   }
 
   update(roadBorders){
-    this.#move()
-    this.polygon = this.#createPolygon()
-    this.damaged = this.#assessDamage(roadBorders)
-    this.sensors.update(roadBorders)
+    if (!this.damaged){
+      this.#move()
+      this.polygon = this.#createPolygon()
+      this.damaged = this.#assessDamage(roadBorders)
+    }
+    if (this.sensors) {
+      this.sensors.update(roadBorders)
+    }
   }
 
   #assessDamage(borders) {

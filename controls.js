@@ -1,10 +1,18 @@
 class Controls{
-  constructor() {
+  constructor(controlType) {
+    this.controlType = controlType
     this.right = false
     this.left = false
     this.forward = false
     this.reverse = false
-    this.#addKeyboardListeners()
+    switch(controlType){
+      case "KEYS":
+          this.#addKeyboardListeners()
+          break
+      case "DUMMY":
+          this.forward = true
+          break
+    }
   }
   #addKeyboardListeners(){
     // whenever a key is pressed the following function will be invoked
