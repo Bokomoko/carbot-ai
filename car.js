@@ -1,5 +1,5 @@
 class Car {
-  constructor( x, y, width, height, controlType, maxSpeed=3 ){
+  constructor( x, y, width, height, controlType, maxSpeed=3, color="black" ){
     this.x = x
     this.y = y
     this.width = width
@@ -8,6 +8,7 @@ class Car {
     if (controlType != "DUMMY") {
       this.sensors = new Sensor(this, 9, 150,Math.PI/2)
     }
+    this.color = color
     this.speed = 0 
     this.accelaration = 0.2
     this.maxSpeed = maxSpeed
@@ -43,7 +44,7 @@ class Car {
   }
 
   draw(ctx) { // method that draws the car into a given context
-    ctx.fillStyle = this.damaged? "gray" : "black"
+    ctx.fillStyle = this.damaged? "gray" : this.color
     ctx.beginPath()
     ctx.moveTo(this.polygon[0].x,this.polygon[0].y)
     for (let i= 1; i<this.polygon.length; i++){
@@ -58,19 +59,20 @@ class Car {
     
   }
 
-  update(roadBorders){
+  update(roadBorders, traffic){
     if (!this.damaged){
       this.#move()
       this.polygon = this.#createPolygon()
-      this.damaged = this.#assessDamage(roadBorders)
+      this.damaged = this.#assessDamage(roadBorders,traffic)
     }
     if (this.sensors) {
-      this.sensors.update(roadBorders)
+      this.sensors.update(roadBorders,traffic)
     }
   }
 
-  #assessDamage(borders) {
-    return  borders.some( (border) => polysIntersect(this.polygon, border))
+  #assessDamage(borders,traffic) {
+    return  borders.some( (border) => polysIntersect(this.polygon, border)) ||
+            traffic.some( (other)=> polysIntersect(this.polygon, other.polygon))
   }
 
 

@@ -13,15 +13,19 @@ const middle = road.getLaneCenter(Math.floor(road.laneCount/2))
 // create a car and put it in this middle lane
 const car = new Car(middle,100,30,50, "KEYS", 4 )   // creates a car at the middle lane of the road
 
+// this array will contain other vehicles in the road     
 const traffic = [
-  new Car(road.getLaneCenter(1),-100,30,50,"DUMMY")
+  new Car(road.getLaneCenter(1),-100,30,50,"DUMMY",3,"blue")
 ]
 
 animate()
 
+
 function animate() {
-  traffic.forEach( (otherCar)=> otherCar.update(road.borders))
-  car.update(road.borders)
+  // the own array of traffic cars won't check collisions among thenselves
+  traffic.forEach( (otherCar)=> otherCar.update(road.borders,[]))
+  // the array of traffic cars is passed so the car object can detect collisions
+  car.update(road.borders,traffic)
 
   // this will resize and clear the canvas
   canvas.height = window.innerHeight // sets the Height (vertical size) to the max fit 
