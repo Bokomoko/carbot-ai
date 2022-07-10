@@ -7,22 +7,6 @@ class Sensor {
     this.rays = []; // the array of rays <!>
     this.readings = []; // readings from the sensors
   }
-<<<<<<< HEAD
-  update(roadBorders, traffic){
-    this.#castRays()
-    this.readings=[ ]  // no readings 
-    for (let i=0; i<this.rays.length;i++){
-      this.readings.push(
-        this.#getReadings(this.rays[i],roadBorders,traffic)
-      )
-    }
-  }
-
-  #getReadings(ray, borders, traffic){
-    let touches=[]
-    // check intersections with road borders
-    for (let i=0; i<borders.length; i++) {
-=======
   update(roadBorders) {
     this.#castRays();
     this.readings = []; // no readings
@@ -34,7 +18,6 @@ class Sensor {
   #getReadings(ray, borders) {
     let touches = [];
     for (let i = 0; i < borders.length; i++) {
->>>>>>> origin/less-func-prog
       const touch = getIntersection(
         ray[0],
         ray[1],
@@ -46,31 +29,9 @@ class Sensor {
       }
     }
 
-<<<<<<< HEAD
-    // check intersections with other cars
-    for (let i=0; i< traffic.length; i++){
-      const poly = traffic[i].polygon
-      // for each side of the other car
-      for (let j=0; j< poly.length; j++){
-        const value = getIntersection(
-          ray[0],
-          ray[1],
-          poly[j],
-          poly[(j+1)%poly.length]
-        )
-        if (value){
-          touches.push(value)
-        }
-      }
-    }
-      
-    if (touches.length ==0 ) { // the ray didn't touch anything
-      return null
-=======
     if (touches.length == 0) {
       // the ray didn't touch anything
       return null;
->>>>>>> origin/less-func-prog
     }
     // return the touch with the least offset
     // sorts the touches by offset
